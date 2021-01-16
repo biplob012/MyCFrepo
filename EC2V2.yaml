@@ -1,0 +1,23 @@
+Resources:
+  MyEC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-06ce513624b435a22 # Amazon Linux AMI
+      Tags:
+        - Key: 'Name'
+          Value: !Join ["", [Test, 2nd, EC2] ]
+      SecurityGroups: !Ref MyNewSG
+  MyNewSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSh via port 22
+      GroupName: MyNewSG
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: '22'
+          IpProtocol: ssh
+          ToPort: '22'
+
+
+

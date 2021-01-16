@@ -1,0 +1,10 @@
+Resources:
+  MyEc2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-06ce513624b435a22 # Amazon Linux AMI
+      Tags:
+        - Key: 'Name'
+          Value: !Join ["",[EC2 , Instance , with , Fn , Join ] ]
+      
