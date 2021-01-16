@@ -1,0 +1,77 @@
+Mappings: # Declare AMI for specific region
+  RegionMap:
+    ap-southeast-2:
+      AMI: ami-06ce513624b435a22
+    ap-southeast-1:
+      AMI: ami-00b8d9cb8a7161e41
+    us-east-1:
+      AMI: ami-0be2609ba883822ec
+    us-ease-2:
+      AMI: ami-0a0ad6b70e61be944
+
+Parameters:                   # Instance type parameters
+  InstanceTypeParameter:
+    Type: String
+    Default: t2.micro
+    Description: Instance type
+    AllowedValues:
+      - t2.micro
+      - m1.small
+      - m1.large
+    Description: Enter t2.micro, m1.small, or m1.large. Default is t2.micro.    
+  
+  #mySubnetIDs:
+    #Description: Subnet IDs
+    #Type: AWS::EC2::Subnet::Id
+  
+  #AvailableKP:
+   # Description: Available KP for the region
+    #Type: AWS::EC2::KeyPair::KeyName
+  
+  AbailableSGName:
+    Description: Avaiable SG fr the region
+    Type: AWS::EC2::SecurityGroup::GroupName
+  
+  
+Resources:
+  MyEC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: !Ref InstanceTypeParameter
+      ImageId:                     # Fetch Amazon Linux AMI from Mapping based on region
+        !FindInMap
+          - RegionMap
+          - !Ref AWS::Region
+          - AMI
+      Tags:
+        - Key: 'Name'
+          Value: !Join
+            - ""
+            - - "Mapping AMI to Regions "
+              - !Ref AWS::Region
+      SecurityGroups:
+        - !Ref AbailableSGName
+      #SubnetId: !Ref mySubnetIDs
+  MyNewSG:                          # Create new Security Group
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSh via port 22
+      GroupName: MyNewSG
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
+Outputs:            #Output of the Ec2 instance
+  InstanceID:
+    Description: The Instance ID
+    Value: !Ref MyEC2Instance
+  ServerDNS:
+    Value:  !GetAtt
+      - MyEC2Instance
+      - PublicDnsName
+
+
+
+
+
